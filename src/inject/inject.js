@@ -14,14 +14,14 @@ chrome.extension.sendMessage({}, function (response) {
                 console.log(htmlResults); //for debugging
                 for (var result of htmlResults) {
                     if (result.innerHTML.indexOf('npmjs.com/package/') != -1) {
-                        getNpmData(result);
+                        addNpmData(result);
                     } else if (result.innerHTML.indexOf('stackoverflow.com/questions/') != -1) {
-                        getStackOverflowData(result);
+                        addStackOverflowData(result);
                     }
                 }
             }
 
-            function getStackOverflowData(result) {
+            function addStackOverflowData(result) {
                 var questionID = result.childNodes[0].href.split('stackoverflow.com/questions/').pop().split('/')[0];;
                 fetch('https://api.stackexchange.com/2.2/questions/' + questionID + '/answers?&site=stackoverflow&filter=withbody&sort=votes')
                     .then(
@@ -43,7 +43,7 @@ chrome.extension.sendMessage({}, function (response) {
                     });
             }
 
-            function getNpmData(result) {
+            function addNpmData(result) {
                 var packageName = result.childNodes[0].href.split('npmjs.com/package/').pop().split('"')[0];;
                 fetch('https://api.npmjs.org/downloads/point/last-week/' + packageName)
                     .then(
