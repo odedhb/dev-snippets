@@ -57,7 +57,7 @@ chrome.extension.sendMessage({}, function (response) {
 
                             // Manipulate the text in the response
                             response.json().then(function (data) {
-                                result.innerHTML = result.innerHTML + '<span style="display: inline-block; text-decoration:none !important; color: dimgrey; font-size: small;">&nbsp-&nbsp' + data.downloads.toLocaleString() + ' weekly downloads</span>';
+                                result.innerHTML = result.innerHTML + '<div style="font-size: large;">' + data.downloads.toLocaleString() + ' weekly downloads</div>';
                             });
                         }
                     )
