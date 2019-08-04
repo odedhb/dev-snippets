@@ -10,31 +10,31 @@ chrome.extension.sendMessage({}, function (response) {
 
 
             function getSearchResults() {
-                var htmlResults = document.getElementsByClassName("LC20lb");
-                // console.log(htmlResults); //for debugging
+                var htmlResults = document.getElementsByClassName("r");
+                console.log(htmlResults); //for debugging
                 for (var result of htmlResults) {
-                    if (result.innerText.indexOf(' - npm') != -1) {
+                    if (result.innerHTML.indexOf('npmjs.com/package/') != -1) {
                         getNpmData(result);
-                    } else if (result.innerText.indexOf(' - Stack Overflow') != -1) {
+                    } else if (result.innerHTML.indexOf('stackoverflow.com/questions/') != -1) {
                         getStackOverflowData(result);
                     }
                 }
             }
 
             function getStackOverflowData(result) {
-                var questionID = result.nextSibling.nextElementSibling.innerText.split('stackoverflow.com/questions/').pop().split('/')[0];;
+                var questionID = result.childNodes[0].href.split('stackoverflow.com/questions/').pop().split('/')[0];;
                 fetch('https://api.stackexchange.com/2.2/questions/' + questionID + '/answers?&site=stackoverflow&filter=withbody&sort=votes')
                     .then(
                         function (response) {
                             if (response.status !== 200) {
-                                console.log('Looks like there was a problem. Status Code: ' +
+                                console.log('Looks like there was a getStackOverflowData problem. Status Code: ' +
                                     response.status);
                                 return;
                             }
 
                             // Manipulate the text in the response
                             response.json().then(function (data) {
-                                result.innerHTML = result.innerHTML + '<span style="display: inline-block; text-decoration:none !important; color: dimgrey; font-size: small;">&nbsp-&nbsp' + data.items[0].body + '</span>';
+                                result.innerHTML = result.innerHTML + '<span style="display: inline-block; text-decoration:none !important; color: dimgrey; font-size: small;">' + data.items[0].body + '</span>';
                             });
                         }
                     )
@@ -44,18 +44,19 @@ chrome.extension.sendMessage({}, function (response) {
             }
 
             function getNpmData(result) {
-                var packageName = result.innerText.replace(' - npm', '');
+                var packageName = result.childNodes[0].href.split('npmjs.com/package/').pop().split('"')[0];;
                 fetch('https://api.npmjs.org/downloads/point/last-week/' + packageName)
                     .then(
                         function (response) {
                             if (response.status !== 200) {
-                                console.log('Looks like there was a problem. Status Code: ' +
+                                console.log('Looks like there was a getNpmData problem. Status Code: ' +
                                     response.status);
                                 return;
                             }
 
                             // Manipulate the text in the response
                             response.json().then(function (data) {
+                                console.log(data);
                                 result.innerHTML = result.innerHTML + '<span style="display: inline-block; text-decoration:none !important; color: dimgrey; font-size: small;">&nbsp-&nbsp' + data.downloads.toLocaleString() + ' weekly downloads</span>';
                             });
                         }
