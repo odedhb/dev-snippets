@@ -11,18 +11,18 @@ chrome.extension.sendMessage({}, function (response) {
 
             function getSearchResults() {
                 var htmlResults = document.getElementsByClassName("r");
-                console.log(htmlResults); //for debugging
+                // console.log(htmlResults); //for debugging
                 for (var result of htmlResults) {
-                    if (result.innerHTML.indexOf('npmjs.com/package/') != -1) {
-                        addNpmData(result);
-                    } else if (result.innerHTML.indexOf('stackoverflow.com/questions/') != -1) {
-                        addStackOverflowData(result);
-                    }
+                    if (
+                        addNpmData(result) ||
+                        addStackOverflowData(result)
+                    ) continue;
                 }
             }
 
             function addStackOverflowData(result) {
-                var questionID = result.childNodes[0].href.split('stackoverflow.com/questions/').pop().split('/')[0];;
+                var questionID = getResultID(result, "stackoverflow.com/questions/", "/");
+                if (!questionID) return false;
                 fetch('https://api.stackexchange.com/2.2/questions/' + questionID + '/answers?&site=stackoverflow&filter=withbody&sort=votes')
                     .then(
                         function (response) {
@@ -44,7 +44,8 @@ chrome.extension.sendMessage({}, function (response) {
             }
 
             function addNpmData(result) {
-                var packageName = result.childNodes[0].href.split('npmjs.com/package/').pop().split('"')[0];;
+                var packageName = getResultID(result, "npmjs.com/package/", '');
+                if (!packageName) return false;
                 fetch('https://api.npmjs.org/downloads/point/last-week/' + packageName)
                     .then(
                         function (response) {
@@ -56,7 +57,6 @@ chrome.extension.sendMessage({}, function (response) {
 
                             // Manipulate the text in the response
                             response.json().then(function (data) {
-                                console.log(data);
                                 result.innerHTML = result.innerHTML + '<span style="display: inline-block; text-decoration:none !important; color: dimgrey; font-size: small;">&nbsp-&nbsp' + data.downloads.toLocaleString() + ' weekly downloads</span>';
                             });
                         }
@@ -66,7 +66,21 @@ chrome.extension.sendMessage({}, function (response) {
                     });
             }
 
-
+            function getResultID(result, start, end) {
+                var id;
+                try {
+                    var href = result.childNodes[0].href;
+                    var matches = href.match(start + "(.*)" + end);
+                    id = matches[1];
+                } catch (e) {
+                    // console.log(result);
+                    // console.log(start);
+                    // console.log(end);
+                    // console.log(e);
+                    return null;
+                }
+                return id;
+            }
         }
     }, 10);
 });
