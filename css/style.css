@@ -1,0 +1,8 @@
+.snippet {
+    border-radius: 5px;
+    border-width:1px;
+    border-style: solid; 
+    border-color: #dadde1;
+    padding: 5px;
+    margin:5px;
+  }
