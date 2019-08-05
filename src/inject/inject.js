@@ -1,5 +1,5 @@
-chrome.extension.sendMessage({}, function (response) {
-    var readyStateCheckInterval = setInterval(function () {
+chrome.extension.sendMessage({}, function(response) {
+    var readyStateCheckInterval = setInterval(function() {
         if (document.readyState === "complete") {
             clearInterval(readyStateCheckInterval);
 
@@ -25,7 +25,7 @@ chrome.extension.sendMessage({}, function (response) {
 
                 fetch('https://api.stackexchange.com/2.2/questions/' + questionID + '/answers?&site=stackoverflow&filter=withbody&sort=votes')
                     .then(
-                        function (response) {
+                        function(response) {
                             if (response.status !== 200) {
                                 console.log('Looks like there was a getStackOverflowData problem. Status Code: ' +
                                     response.status);
@@ -33,7 +33,7 @@ chrome.extension.sendMessage({}, function (response) {
                             }
 
                             // Manipulate the text in the response
-                            response.json().then(function (data) {
+                            response.json().then(function(data) {
                                 var snippet = "No answers";
                                 if (data.items.length) {
                                     snippet = data.items[0].body;
@@ -43,7 +43,7 @@ chrome.extension.sendMessage({}, function (response) {
                             });
                         }
                     )
-                    .catch(function (err) {
+                    .catch(function(err) {
                         console.log('Fetch Error :-S', err);
                     });
             }
@@ -53,7 +53,7 @@ chrome.extension.sendMessage({}, function (response) {
                 if (!packageName) return false;
                 fetch('https://api.npmjs.org/downloads/point/last-week/' + packageName)
                     .then(
-                        function (response) {
+                        function(response) {
                             if (response.status !== 200) {
                                 console.log('Looks like there was a getNpmData problem. Status Code: ' +
                                     response.status);
@@ -61,12 +61,12 @@ chrome.extension.sendMessage({}, function (response) {
                             }
 
                             // Manipulate the text in the response
-                            response.json().then(function (data) {
+                            response.json().then(function(data) {
                                 result.innerHTML = result.innerHTML + '<div class="snippet" style="font-size: large;">' + data.downloads.toLocaleString() + ' weekly downloads</div>';
                             });
                         }
                     )
-                    .catch(function (err) {
+                    .catch(function(err) {
                         console.log('Fetch Error :-S', err);
                     });
             }
@@ -86,11 +86,32 @@ chrome.extension.sendMessage({}, function (response) {
                 }
                 return id;
             }
-            function highlight(element) {
-                element.querySelectorAll('pre code').forEach((block) => {
-                    hljs.highlightBlock(block);
+
+            function highlight(block) {
+                var children = getAllDescendants(block);
+                children.forEach(element => {
+                    console.log('-----' + element.localName + '-----');
+                    console.log(element.textContent);
+                    if (element.localName === 'pre' || element.localName === 'code') {
+                        hljs.highlightBlock(element);
+                    }
                 });
             }
+
+            function getAllDescendants(node) {
+                var all = [];
+                getDescendants(node);
+
+                function getDescendants(node) {
+                    for (var i = 0; i < node.childNodes.length; i++) {
+                        var child = node.childNodes[i];
+                        getDescendants(child);
+                        all.push(child);
+                    }
+                }
+                return all;
+            }
+
         }
     }, 10);
 });
