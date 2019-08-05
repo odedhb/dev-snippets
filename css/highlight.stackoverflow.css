@@ -1,7 +1,5 @@
 .hljs {
-    display: block;
     overflow-x: auto;
-    padding: .5em;
     color: #2A2D2F;
     background: #EDEEEF;
     font-family: Consolas, Menlo, Monaco, "Lucida Console", "Liberation Mono", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Courier New", monospace, sans-serif;
