@@ -1,5 +1,5 @@
 {
-  "name": "NPM stats on google search results",
+  "name": "Dev snippets on google search results",
   "version": "0.0.1",
   "manifest_version": 2,
   "description": "This extension was created by Oded Breiner",
@@ -12,7 +12,7 @@
   "default_locale": "en",
   "page_action": {
     "default_icon": "icons/icon19.png",
-    "default_title": "NPM stats on google search results",
+    "default_title": "Dev snippets on google search results",
     "default_popup": "src/page_action/page_action.html"
   },
   "permissions": [

@@ -34,6 +34,10 @@ chrome.extension.sendMessage({}, function (response) {
 
                             // Manipulate the text in the response
                             response.json().then(function (data) {
+                                if (!data.items.length) {
+                                    result.innerHTML = result.innerHTML + '<div style="border-style: solid;">No answers</div>';
+                                    return;
+                                }
                                 result.innerHTML = result.innerHTML + '<div style="border-style: solid;">' + data.items[0].body + '</div>';
                                 highlight(result);
                             });
@@ -58,7 +62,7 @@ chrome.extension.sendMessage({}, function (response) {
 
                             // Manipulate the text in the response
                             response.json().then(function (data) {
-                                result.innerHTML = result.innerHTML + '<div style="font-size: large;">' + data.downloads.toLocaleString() + ' weekly downloads</div>';
+                                result.innerHTML = result.innerHTML + '<div style="font-size: large; border-style: solid;">' + data.downloads.toLocaleString() + ' weekly downloads</div>';
                             });
                         }
                     )
