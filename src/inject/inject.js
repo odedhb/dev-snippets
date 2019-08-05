@@ -38,8 +38,7 @@ chrome.extension.sendMessage({}, function (response) {
                                 if (data.items.length) {
                                     snippet = data.items[0].body;
                                 }
-                                result.innerHTML = result.innerHTML + '<div  class="snippet" >' + snippet + '</div>';
-                                highlight(result);
+                                result.innerHTML = result.innerHTML + '<div class="snippet">' + PR.prettyPrintOne(snippet) + '</div>';
                             });
                         }
                     )
@@ -85,11 +84,6 @@ chrome.extension.sendMessage({}, function (response) {
                     return null;
                 }
                 return id;
-            }
-            function highlight(element) {
-                element.querySelectorAll('pre code').forEach((block) => {
-                    hljs.highlightBlock(block);
-                });
             }
         }
     }, 10);

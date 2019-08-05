@@ -21,12 +21,11 @@
   "content_scripts": [
     {
       "css": [
-        "css/style.css",
-        "css/highlight.css"
+        "css/style.css"
       ],
       "js": [
         "src/inject/inject.js",
-        "js/highlight.js"
+        "js/run_prettify.js"
       ],
       "matches": [
         "https://www.google.co.il/*",
