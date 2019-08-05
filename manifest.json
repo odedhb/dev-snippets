@@ -20,12 +20,16 @@
   ],
   "content_scripts": [
     {
-      "matches": [
-        "https://www.google.co.il/*",
-	"https://www.google.com/*"
+      "css": [
+        "css/highlight.css"
       ],
       "js": [
-        "src/inject/inject.js"
+        "src/inject/inject.js",
+        "js/highlight.js"
+      ],
+      "matches": [
+        "https://www.google.co.il/*",
+        "https://www.google.com/*"
       ]
     }
   ]

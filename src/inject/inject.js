@@ -8,7 +8,6 @@ chrome.extension.sendMessage({}, function (response) {
 
             getSearchResults();
 
-
             function getSearchResults() {
                 var htmlResults = document.getElementsByClassName("r");
                 // console.log(htmlResults); //for debugging
@@ -23,6 +22,7 @@ chrome.extension.sendMessage({}, function (response) {
             function addStackOverflowData(result) {
                 var questionID = getResultID(result, "stackoverflow.com/questions/", "/");
                 if (!questionID) return false;
+
                 fetch('https://api.stackexchange.com/2.2/questions/' + questionID + '/answers?&site=stackoverflow&filter=withbody&sort=votes')
                     .then(
                         function (response) {
@@ -35,6 +35,7 @@ chrome.extension.sendMessage({}, function (response) {
                             // Manipulate the text in the response
                             response.json().then(function (data) {
                                 result.innerHTML = result.innerHTML + '<div style="border-style: solid;">' + data.items[0].body + '</div>';
+                                highlight(result);
                             });
                         }
                     )
@@ -80,6 +81,11 @@ chrome.extension.sendMessage({}, function (response) {
                     return null;
                 }
                 return id;
+            }
+            function highlight(element) {
+                element.querySelectorAll('pre code').forEach((block) => {
+                    hljs.highlightBlock(block);
+                });
             }
         }
     }, 10);
