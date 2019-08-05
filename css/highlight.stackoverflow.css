@@ -2,8 +2,16 @@
     display: block;
     overflow-x: auto;
     padding: .5em;
-    color: #333;
-    background: #EDEEEF
+    color: #2A2D2F;
+    background: #EDEEEF;
+    font-family: Consolas, Menlo, Monaco, "Lucida Console", "Liberation Mono", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Courier New", monospace, sans-serif;
+    font-size: 13px;
+    font-kerning: auto;
+    font-stretch: normal;
+    font-style: normal;
+    font-variant: normal;
+    font-variant-ligatures: normal;
+    font-weight: 400;
 }
 
 .hljs-comment,
@@ -27,14 +35,13 @@
 
 .hljs-string,
 .hljs-doctag {
-    color: #d14
+    color: #722323
 }
 
 .hljs-title,
 .hljs-section,
 .hljs-selector-id {
-    color: #900;
-    font-weight: bold
+    color: #2A2D2F;
 }
 
 .hljs-subst {
