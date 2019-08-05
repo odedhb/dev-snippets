@@ -88,30 +88,13 @@ chrome.extension.sendMessage({}, function(response) {
             }
 
             function highlight(block) {
-                var children = getAllDescendants(block);
+                var children = block.querySelectorAll("*");
                 children.forEach(element => {
-                    console.log('-----' + element.localName + '-----');
-                    console.log(element.textContent);
                     if (element.localName === 'pre' || element.localName === 'code') {
                         hljs.highlightBlock(element);
                     }
                 });
             }
-
-            function getAllDescendants(node) {
-                var all = [];
-                getDescendants(node);
-
-                function getDescendants(node) {
-                    for (var i = 0; i < node.childNodes.length; i++) {
-                        var child = node.childNodes[i];
-                        getDescendants(child);
-                        all.push(child);
-                    }
-                }
-                return all;
-            }
-
         }
     }, 10);
 });
