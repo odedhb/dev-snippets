@@ -106,6 +106,29 @@ chrome.extension.sendMessage({}, function (response) {
                     });
             }
 
+            function getContent(searchResult, sourceUriStart, sourceUriEnd, targetUriStart, targetUriEnd, manipulateData) {
+                var part = getPathPart(searchResult, sourceUriStart, sourceUriEnd);
+                if (!part) return null;
+                fetch(targetUriStart + packageName + targetUriEnd)
+                    .then(
+                        function (response) {
+                            if (response.status !== 200) {
+                                console.log('Looks like there was a ' + sourceUriStart + ' problem. Status Code: ' +
+                                    response.status);
+                                manipulateData(null);
+                            }
+
+                            response.json().then(function (data) {
+                                manipulateData(data);
+                            });
+                        }
+                    )
+                    .catch(function (err) {
+                        console.log('Fetch Error :-S' + sourceUriStart, err);
+                        manipulateData(null);
+                    });
+            }
+
             function getPathPart(result, start, end) {
                 var id;
                 try {
