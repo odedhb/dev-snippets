@@ -1,5 +1,5 @@
-chrome.extension.sendMessage({}, function(response) {
-    var readyStateCheckInterval = setInterval(function() {
+chrome.extension.sendMessage({}, function (response) {
+    var readyStateCheckInterval = setInterval(function () {
         if (document.readyState === "complete") {
             clearInterval(readyStateCheckInterval);
 
@@ -14,7 +14,8 @@ chrome.extension.sendMessage({}, function(response) {
                 for (var result of htmlResults) {
                     if (
                         addNpmData(result) ||
-                        addStackOverflowData(result)
+                        addStackOverflowData(result) ||
+                        addGitHubData(result)
                     ) continue;
                 }
             }
@@ -25,7 +26,7 @@ chrome.extension.sendMessage({}, function(response) {
 
                 fetch('https://api.stackexchange.com/2.2/questions/' + questionID + '/answers?&site=stackoverflow&filter=withbody&sort=votes')
                     .then(
-                        function(response) {
+                        function (response) {
                             if (response.status !== 200) {
                                 console.log('Looks like there was a getStackOverflowData problem. Status Code: ' +
                                     response.status);
@@ -33,7 +34,7 @@ chrome.extension.sendMessage({}, function(response) {
                             }
 
                             // Manipulate the text in the response
-                            response.json().then(function(data) {
+                            response.json().then(function (data) {
                                 var snippet = "No answers";
                                 if (data.items.length) {
                                     snippet = data.items[0].body;
@@ -43,7 +44,7 @@ chrome.extension.sendMessage({}, function(response) {
                             });
                         }
                     )
-                    .catch(function(err) {
+                    .catch(function (err) {
                         console.log('Fetch Error :-S', err);
                     });
             }
@@ -53,7 +54,7 @@ chrome.extension.sendMessage({}, function(response) {
                 if (!packageName) return false;
                 fetch('https://api.npmjs.org/downloads/point/last-week/' + packageName)
                     .then(
-                        function(response) {
+                        function (response) {
                             if (response.status !== 200) {
                                 console.log('Looks like there was a getNpmData problem. Status Code: ' +
                                     response.status);
@@ -61,12 +62,39 @@ chrome.extension.sendMessage({}, function(response) {
                             }
 
                             // Manipulate the text in the response
-                            response.json().then(function(data) {
+                            response.json().then(function (data) {
                                 result.innerHTML = result.innerHTML + '<div class="snippet" style="font-size: large;">' + data.downloads.toLocaleString() + ' weekly downloads</div>';
                             });
                         }
                     )
-                    .catch(function(err) {
+                    .catch(function (err) {
+                        console.log('Fetch Error :-S', err);
+                    });
+            }
+
+            function addGitHubData(result) {
+                var repo = getResultID(result, "github.com/", "");
+                if (!repo) return false;
+                var mdUrl = 'https://raw.githubusercontent.com/' + repo + '/master/README.md';
+                fetch(mdUrl)
+                    .then(
+                        function (response) {
+                            if (response.status !== 200) {
+                                console.log('Looks like there was a getGithubData problem. Status Code: ' +
+                                    response.status);
+                                return;
+                            }
+
+                            // Manipulate the text in the response
+                            response.text().then(function (data) {
+                                var matches = data.match(/```[^"]*```/);
+                                var snippet = matches[0];
+                                result.innerHTML = result.innerHTML + '<div  class="snippet" ><pre>' + snippet + '</pre></div>';
+                                highlight(result);
+                            });
+                        }
+                    )
+                    .catch(function (err) {
                         console.log('Fetch Error :-S', err);
                     });
             }
