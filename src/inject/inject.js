@@ -21,7 +21,7 @@ chrome.extension.sendMessage({}, function (response) {
             }
 
             function addStackOverflowData(result) {
-                var questionID = getResultID(result, "stackoverflow.com/questions/", "/");
+                var questionID = getPathPart(result, "stackoverflow.com/questions/", "/");
                 if (!questionID) return false;
 
                 fetch('https://api.stackexchange.com/2.2/questions/' + questionID + '/answers?&site=stackoverflow&filter=withbody&sort=votes')
@@ -50,7 +50,7 @@ chrome.extension.sendMessage({}, function (response) {
             }
 
             function addNpmData(result) {
-                var packageName = getResultID(result, "npmjs.com/package/", '');
+                var packageName = getPathPart(result, "npmjs.com/package/", '');
                 if (!packageName) return false;
                 fetch('https://api.npmjs.org/downloads/point/last-week/' + packageName)
                     .then(
@@ -73,7 +73,7 @@ chrome.extension.sendMessage({}, function (response) {
             }
 
             function addGitHubData(result) {
-                var repo = getResultID(result, "github.com/", "");
+                var repo = getPathPart(result, "github.com/", "");
                 if (!repo) return false;
                 var mdUrl = 'https://raw.githubusercontent.com/' + repo + '/master/README.md';
                 fetch(mdUrl)
@@ -106,7 +106,7 @@ chrome.extension.sendMessage({}, function (response) {
                     });
             }
 
-            function getResultID(result, start, end) {
+            function getPathPart(result, start, end) {
                 var id;
                 try {
                     var href = result.childNodes[0].href;
