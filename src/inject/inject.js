@@ -90,8 +90,10 @@ chrome.extension.sendMessage({}, function (response) {
                                 var snippet = '<div class="snippet">';
                                 var matches = data.match(/```[\s\S]+?```/g);
                                 matches.forEach(match => {
-                                    match = match.replace(/```/g, '');
-                                    snippet += '<pre>' + match + '</pre>';
+                                    if (snippet.split(/\r\n|\r|\n/).length < 20) {
+                                        match = match.replace(/```/g, '');
+                                        snippet += '<pre>' + match + '</pre>';
+                                    }
                                 });
                                 snippet += '</div>';
                                 result.innerHTML += snippet;
