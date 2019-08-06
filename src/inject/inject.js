@@ -87,7 +87,7 @@ chrome.extension.sendMessage({}, function (response) {
 
                             // Manipulate the text in the response
                             response.text().then(function (data) {
-                                var matches = data.match(/```[^"]*```/);
+                                var matches = data.match(/```[\s\S]+?```/g);
                                 var snippet = matches[0];
                                 result.innerHTML = result.innerHTML + '<div  class="snippet" ><pre>' + snippet + '</pre></div>';
                                 highlight(result);
