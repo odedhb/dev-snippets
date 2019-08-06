@@ -89,6 +89,7 @@ chrome.extension.sendMessage({}, function (response) {
                             response.text().then(function (data) {
                                 var matches = data.match(/```[\s\S]+?```/g);
                                 var snippet = matches[0];
+                                snippet = snippet.replace(/```/g, '');
                                 result.innerHTML = result.innerHTML + '<div  class="snippet" ><pre>' + snippet + '</pre></div>';
                                 highlight(result);
                             });
