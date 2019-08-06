@@ -87,10 +87,14 @@ chrome.extension.sendMessage({}, function (response) {
 
                             // Manipulate the text in the response
                             response.text().then(function (data) {
+                                var snippet = '<div class="snippet">';
                                 var matches = data.match(/```[\s\S]+?```/g);
-                                var snippet = matches[0];
-                                snippet = snippet.replace(/```/g, '');
-                                result.innerHTML = result.innerHTML + '<div  class="snippet" ><pre>' + snippet + '</pre></div>';
+                                matches.forEach(match => {
+                                    match = match.replace(/```/g, '');
+                                    snippet += '<pre>' + match + '</pre>';
+                                });
+                                snippet += '</div>';
+                                result.innerHTML += snippet;
                                 highlight(result);
                             });
                         }
