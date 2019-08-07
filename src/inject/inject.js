@@ -74,7 +74,7 @@ chrome.extension.sendMessage({}, function (response) {
 
             function addGitHubData(result) {
                 return getContent(result, "github.com/", "", 'https://raw.githubusercontent.com/', '/master/README.md', function (response) {
-                    // Manipulate the text in the response
+                    if (!response) return false;
                     response.text().then(function (data) {
                         var snippet = '<div class="snippet">';
                         var matches = data.match(/```[\s\S]+?```/g);
