@@ -50,26 +50,12 @@ chrome.extension.sendMessage({}, function (response) {
             }
 
             function addNpmData(result) {
-                var packageName = getPathPart(result, "npmjs.com/package/", '');
-                if (!packageName) return false;
-                fetch('https://api.npmjs.org/downloads/point/last-week/' + packageName)
-                    .then(
-                        function (response) {
-                            if (response.status !== 200) {
-                                console.log('Looks like there was a getNpmData problem. Status Code: ' +
-                                    response.status);
-                                return;
-                            }
-
-                            // Manipulate the text in the response
-                            response.json().then(function (data) {
-                                result.innerHTML = result.innerHTML + '<div class="snippet" style="font-size: large;">' + data.downloads.toLocaleString() + ' weekly downloads</div>';
-                            });
-                        }
-                    )
-                    .catch(function (err) {
-                        console.log('Fetch Error :-S', err);
+                return getContent(result, "npmjs.com/package/", "", 'https://api.npmjs.org/downloads/point/last-week/', '', function (response) {
+                    if (!response) return false;
+                    response.json().then(function (data) {
+                        result.innerHTML = result.innerHTML + '<div class="snippet" style="font-size: large;">' + data.downloads.toLocaleString() + ' weekly downloads</div>';
                     });
+                })
             }
 
             function addGitHubData(result) {
