@@ -1,6 +1,6 @@
 chrome.extension.sendMessage({}, intervalCheck);
 
-function intervalCheck(response) {
+function intervalCheck() {
     var readyStateCheckInterval = setInterval(function () {
         if (document.readyState === "complete") {
             clearInterval(readyStateCheckInterval);
