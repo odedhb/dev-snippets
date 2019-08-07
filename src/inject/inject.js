@@ -1,7 +1,9 @@
+'use strict'
+
 chrome.extension.sendMessage({}, intervalCheck);
 
 function intervalCheck() {
-    var readyStateCheckInterval = setInterval(function () {
+    let readyStateCheckInterval = setInterval(function () {
         if (document.readyState === "complete") {
             clearInterval(readyStateCheckInterval);
             // ----------------------------------------------------------
@@ -12,13 +14,13 @@ function intervalCheck() {
 }
 
 function getSearchResults() {
-    var htmlResults = document.getElementsByClassName("r");
+    let htmlResults = document.getElementsByClassName("r");
     // console.log(htmlResults); //for debugging
-    for (var result of htmlResults) {
+    for (let result of htmlResults) {
         if (
+            addGitHubData(result) ||
             addNpmData(result) ||
-            addStackOverflowData(result) ||
-            addGitHubData(result)
+            addStackOverflowData(result)
         ) continue;
     }
 }
@@ -27,7 +29,7 @@ function addStackOverflowData(result) {
     return getContent(result, "stackoverflow.com/questions/", "/", 'https://api.stackexchange.com/2.2/questions/', '/answers?&site=stackoverflow&filter=withbody&sort=votes', function (response) {
         if (!response) return false;
         response.json().then(function (data) {
-            var snippet = "No answers";
+            let snippet = "No answers";
             if (data.items.length) {
                 snippet = data.items[0].body;
             }
@@ -46,52 +48,45 @@ function addNpmData(result) {
     })
 }
 
-function addGitHubData(result) {
-    return getContent(result, "github.com/", "", 'https://raw.githubusercontent.com/', '/master/README.md', function (response) {
-        if (!response) return false;
-        response.text().then(function (data) {
-            var snippet = '<div class="snippet">';
-            var matches = data.match(/```[\s\S]+?```/g);
-            matches.forEach(match => {
-                if (snippet.split(/\r\n|\r|\n/).length < 20) {
-                    match = match.replace(/```/g, '');
-                    snippet += '<pre>' + match + '</pre>';
-                }
-            });
-            snippet += '</div>';
-            result.innerHTML += snippet;
-            highlight(result);
+async function addGitHubData(result) {
+    let response = await getContent(result, "github.com/", "", 'https://raw.githubusercontent.com/', '/master/README.md');
+    if (!response) return false;
+    response.text().then(function (data) {
+        let snippet = '<div class="snippet">';
+        let matches = data.match(/```[\s\S]+?```/g);
+        matches.forEach(match => {
+            if (snippet.split(/\r\n|\r|\n/).length < 20) {
+                match = match.replace(/```/g, '');
+                snippet += '<pre>' + match + '</pre>';
+            }
         });
+        snippet += '</div>';
+        result.innerHTML += snippet;
+        highlight(result);
     });
 }
 
-function getContent(searchResult, sourceUriStart, sourceUriEnd, targetUriStart, targetUriEnd, manipulateData) {
-    var part = getPathPart(searchResult, sourceUriStart, sourceUriEnd);
-    if (!part) return false;
-    fetch(targetUriStart + part + targetUriEnd)
-        .then(
-            function (response) {
-                if (response.status !== 200) {
-                    console.log('Looks like there was a ' + sourceUriStart + ' problem. Status Code: ' +
-                        response.status);
-                    manipulateData(null);
-                } else {
-                    manipulateData(response);
-                }
-            }
-        )
-        .catch(function (err) {
-            console.log('Fetch Error :-S ' + sourceUriStart, err);
-            manipulateData(null);
-        });
-    return true;
+async function getContent(searchResult, sourceUriStart, sourceUriEnd, targetUriStart, targetUriEnd) {
+    let part = getPathPart(searchResult, sourceUriStart, sourceUriEnd);
+    if (!part) return null;
+
+    let response = await fetch(targetUriStart + part + targetUriEnd).catch((err) => {
+        console.log('Fetch Error :-S ' + sourceUriStart, err);
+    });;
+
+    if (!response || response.status !== 200) {
+        console.log('Looks like there was a ' + sourceUriStart + ' problem. Status Code: ' + response.status);
+        return null;
+    }
+
+    return response;
 }
 
 function getPathPart(result, start, end) {
-    var id;
+    let id;
     try {
-        var href = result.childNodes[0].href;
-        var matches = href.match(start + "(.*)" + end);
+        let href = result.childNodes[0].href;
+        let matches = href.match(start + "(.*)" + end);
         id = matches[1];
     } catch (e) {
         return null;
@@ -100,7 +95,7 @@ function getPathPart(result, start, end) {
 }
 
 function highlight(block) {
-    var children = block.querySelectorAll("*");
+    let children = block.querySelectorAll("*");
     children.forEach(element => {
         if (element.localName === 'pre' || element.localName === 'code') {
             hljs.highlightBlock(element);
