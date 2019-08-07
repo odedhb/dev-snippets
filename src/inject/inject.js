@@ -17,11 +17,7 @@ function getSearchResults() {
     let htmlResults = document.getElementsByClassName("r");
     // console.log(htmlResults); //for debugging
     for (let result of htmlResults) {
-        if (
-            addGitHubData(result) ||
-            addNpmData(result) ||
-            addStackOverflowData(result)
-        ) continue;
+        addGitHubData(result).catch(addNpmData(result)).catch(addStackOverflowData(result));
     }
 }
 
@@ -39,31 +35,28 @@ function addStackOverflowData(result) {
     });
 }
 
-function addNpmData(result) {
-    return getContent(result, "npmjs.com/package/", "", 'https://api.npmjs.org/downloads/point/last-week/', '', function (response) {
-        if (!response) return false;
-        response.json().then(function (data) {
-            result.innerHTML = result.innerHTML + '<div class="snippet" style="font-size: large;">' + data.downloads.toLocaleString() + ' weekly downloads</div>';
-        });
-    })
+async function addNpmData(result) {
+    let response = await getContent(result, "npmjs.com/package/", '', 'https://api.npmjs.org/downloads/point/last-week/', '');
+    if (!response) return false;
+    response.json().then(function (data) {
+        result.innerHTML = result.innerHTML + '<div class="snippet" style="font-size: large;">' + data.downloads.toLocaleString() + ' weekly downloads</div>';
+    });
 }
 
 async function addGitHubData(result) {
     let response = await getContent(result, "github.com/", "", 'https://raw.githubusercontent.com/', '/master/README.md');
-    if (!response) return false;
-    response.text().then(function (data) {
-        let snippet = '<div class="snippet">';
-        let matches = data.match(/```[\s\S]+?```/g);
-        matches.forEach(match => {
-            if (snippet.split(/\r\n|\r|\n/).length < 20) {
-                match = match.replace(/```/g, '');
-                snippet += '<pre>' + match + '</pre>';
-            }
-        });
-        snippet += '</div>';
-        result.innerHTML += snippet;
-        highlight(result);
+    let data = await response.text();
+    let snippet = '<div class="snippet">';
+    let matches = data.match(/```[\s\S]+?```/g);
+    matches.forEach(match => {
+        if (snippet.split(/\r\n|\r|\n/).length < 20) {
+            match = match.replace(/```/g, '');
+            snippet += '<pre>' + match + '</pre>';
+        }
     });
+    snippet += '</div>';
+    result.innerHTML += snippet;
+    highlight(result);
 }
 
 async function getContent(searchResult, sourceUriStart, sourceUriEnd, targetUriStart, targetUriEnd) {
