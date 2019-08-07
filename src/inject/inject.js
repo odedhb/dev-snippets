@@ -21,32 +21,17 @@ chrome.extension.sendMessage({}, function (response) {
             }
 
             function addStackOverflowData(result) {
-                var questionID = getPathPart(result, "stackoverflow.com/questions/", "/");
-                if (!questionID) return false;
-
-                fetch('https://api.stackexchange.com/2.2/questions/' + questionID + '/answers?&site=stackoverflow&filter=withbody&sort=votes')
-                    .then(
-                        function (response) {
-                            if (response.status !== 200) {
-                                console.log('Looks like there was a getStackOverflowData problem. Status Code: ' +
-                                    response.status);
-                                return;
-                            }
-
-                            // Manipulate the text in the response
-                            response.json().then(function (data) {
-                                var snippet = "No answers";
-                                if (data.items.length) {
-                                    snippet = data.items[0].body;
-                                }
-                                result.innerHTML = result.innerHTML + '<div  class="snippet" >' + snippet + '</div>';
-                                highlight(result);
-                            });
+                return getContent(result, "stackoverflow.com/questions/", "/", 'https://api.stackexchange.com/2.2/questions/', '/answers?&site=stackoverflow&filter=withbody&sort=votes', function (response) {
+                    if (!response) return false;
+                    response.json().then(function (data) {
+                        var snippet = "No answers";
+                        if (data.items.length) {
+                            snippet = data.items[0].body;
                         }
-                    )
-                    .catch(function (err) {
-                        console.log('Fetch Error :-S', err);
+                        result.innerHTML = result.innerHTML + '<div  class="snippet" >' + snippet + '</div>';
+                        highlight(result);
                     });
+                });
             }
 
             function addNpmData(result) {
