@@ -73,60 +73,44 @@ chrome.extension.sendMessage({}, function (response) {
             }
 
             function addGitHubData(result) {
-                var repo = getPathPart(result, "github.com/", "");
-                if (!repo) return false;
-                var mdUrl = 'https://raw.githubusercontent.com/' + repo + '/master/README.md';
-                fetch(mdUrl)
-                    .then(
-                        function (response) {
-                            if (response.status !== 200) {
-                                console.log('Looks like there was a getGithubData problem. Status Code: ' +
-                                    response.status);
-                                return;
+                return getContent(result, "github.com/", "", 'https://raw.githubusercontent.com/', '/master/README.md', function (response) {
+                    // Manipulate the text in the response
+                    response.text().then(function (data) {
+                        var snippet = '<div class="snippet">';
+                        var matches = data.match(/```[\s\S]+?```/g);
+                        matches.forEach(match => {
+                            if (snippet.split(/\r\n|\r|\n/).length < 20) {
+                                match = match.replace(/```/g, '');
+                                snippet += '<pre>' + match + '</pre>';
                             }
-
-                            // Manipulate the text in the response
-                            response.text().then(function (data) {
-                                var snippet = '<div class="snippet">';
-                                var matches = data.match(/```[\s\S]+?```/g);
-                                matches.forEach(match => {
-                                    if (snippet.split(/\r\n|\r|\n/).length < 20) {
-                                        match = match.replace(/```/g, '');
-                                        snippet += '<pre>' + match + '</pre>';
-                                    }
-                                });
-                                snippet += '</div>';
-                                result.innerHTML += snippet;
-                                highlight(result);
-                            });
-                        }
-                    )
-                    .catch(function (err) {
-                        console.log('Fetch Error :-S', err);
+                        });
+                        snippet += '</div>';
+                        result.innerHTML += snippet;
+                        highlight(result);
                     });
+                });
             }
 
             function getContent(searchResult, sourceUriStart, sourceUriEnd, targetUriStart, targetUriEnd, manipulateData) {
                 var part = getPathPart(searchResult, sourceUriStart, sourceUriEnd);
-                if (!part) return null;
-                fetch(targetUriStart + packageName + targetUriEnd)
+                if (!part) return false;
+                fetch(targetUriStart + part + targetUriEnd)
                     .then(
                         function (response) {
                             if (response.status !== 200) {
                                 console.log('Looks like there was a ' + sourceUriStart + ' problem. Status Code: ' +
                                     response.status);
                                 manipulateData(null);
+                            } else {
+                                manipulateData(response);
                             }
-
-                            response.json().then(function (data) {
-                                manipulateData(data);
-                            });
                         }
                     )
                     .catch(function (err) {
                         console.log('Fetch Error :-S' + sourceUriStart, err);
                         manipulateData(null);
                     });
+                return true;
             }
 
             function getPathPart(result, start, end) {
@@ -136,10 +120,6 @@ chrome.extension.sendMessage({}, function (response) {
                     var matches = href.match(start + "(.*)" + end);
                     id = matches[1];
                 } catch (e) {
-                    // console.log(result);
-                    // console.log(start);
-                    // console.log(end);
-                    // console.log(e);
                     return null;
                 }
                 return id;
