@@ -107,7 +107,7 @@ chrome.extension.sendMessage({}, function (response) {
                         }
                     )
                     .catch(function (err) {
-                        console.log('Fetch Error :-S' + sourceUriStart, err);
+                        console.log('Fetch Error :-S ' + sourceUriStart, err);
                         manipulateData(null);
                     });
                 return true;
