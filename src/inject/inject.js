@@ -62,14 +62,10 @@ async function addGitHubData(result) {
 async function getContent(searchResult, sourceUriStart, sourceUriEnd, targetUriStart, targetUriEnd) {
     let part = getPathPart(searchResult, sourceUriStart, sourceUriEnd);
     if (!part) return null;
-
-    let response = await fetch(targetUriStart + part + targetUriEnd).catch((err) => {
-        console.log('Fetch Error :-S ' + sourceUriStart, err);
-    });;
+    let response = await fetch(targetUriStart + part + targetUriEnd);
 
     if (!response || response.status !== 200) {
-        console.log('Looks like there was a ' + sourceUriStart + ' problem. Status Code: ' + response.status);
-        return null;
+        throw ('Looks like there was a ' + sourceUriStart + ' problem. Status Code: ' + response.status);
     }
 
     return response;
