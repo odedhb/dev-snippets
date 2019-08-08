@@ -17,12 +17,19 @@ function getSearchResults() {
     let htmlResults = document.getElementsByClassName("r");
     // console.log(htmlResults); //for debugging
     for (let result of htmlResults) {
-        addGitHubData(result).catch(addNpmData(result)).catch(addStackOverflowData(result));
+        addGitHubData(result).catch(() => {
+            addNpmData(result).catch(() => {
+                addStackOverflowData(result).catch(err => {
+                    console.log( err);
+                });
+            })
+        })
     }
 }
 
 async function addStackOverflowData(result) {
     let response = await getContent(result, "stackoverflow.com/questions/", "/", 'https://api.stackexchange.com/2.2/questions/', '/answers?&site=stackoverflow&filter=withbody&sort=votes');
+    if (!response) throw ('next');
     let data = await response.json();
     let snippet = "No answers";
     if (data.items.length) {
@@ -34,12 +41,14 @@ async function addStackOverflowData(result) {
 
 async function addNpmData(result) {
     let response = await getContent(result, "npmjs.com/package/", '', 'https://api.npmjs.org/downloads/point/last-week/', '');
+    if (!response) throw ('next');
     let data = await response.json();
     result.innerHTML = result.innerHTML + '<div class="snippet" style="font-size: large;">' + data.downloads.toLocaleString() + ' weekly downloads</div>';
 }
 
 async function addGitHubData(result) {
     let response = await getContent(result, "github.com/", "", 'https://raw.githubusercontent.com/', '/master/README.md');
+    if (!response) throw ('next');
     let data = await response.text();
     let snippet = '<div class="snippet">';
     let matches = data.match(/```[\s\S]+?```/g);
