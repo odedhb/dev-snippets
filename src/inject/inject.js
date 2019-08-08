@@ -34,10 +34,8 @@ async function addStackOverflowData(result) {
 
 async function addNpmData(result) {
     let response = await getContent(result, "npmjs.com/package/", '', 'https://api.npmjs.org/downloads/point/last-week/', '');
-    if (!response) return false;
-    response.json().then(function (data) {
-        result.innerHTML = result.innerHTML + '<div class="snippet" style="font-size: large;">' + data.downloads.toLocaleString() + ' weekly downloads</div>';
-    });
+    let data = await response.json();
+    result.innerHTML = result.innerHTML + '<div class="snippet" style="font-size: large;">' + data.downloads.toLocaleString() + ' weekly downloads</div>';
 }
 
 async function addGitHubData(result) {
