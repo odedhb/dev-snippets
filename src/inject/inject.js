@@ -19,9 +19,7 @@ function getSearchResults() {
     for (let result of htmlResults) {
         addGitHubData(result).catch(() => {
             addNpmData(result).catch(() => {
-                addStackOverflowData(result).catch(err => {
-                    console.log( err);
-                });
+                addStackOverflowData(result).catch(err => console.log(err));
             })
         })
     }
