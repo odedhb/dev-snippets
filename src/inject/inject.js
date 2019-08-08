@@ -21,18 +21,15 @@ function getSearchResults() {
     }
 }
 
-function addStackOverflowData(result) {
-    return getContent(result, "stackoverflow.com/questions/", "/", 'https://api.stackexchange.com/2.2/questions/', '/answers?&site=stackoverflow&filter=withbody&sort=votes', function (response) {
-        if (!response) return false;
-        response.json().then(function (data) {
-            let snippet = "No answers";
-            if (data.items.length) {
-                snippet = data.items[0].body;
-            }
-            result.innerHTML = result.innerHTML + '<div  class="snippet" >' + snippet + '</div>';
-            highlight(result);
-        });
-    });
+async function addStackOverflowData(result) {
+    let response = await getContent(result, "stackoverflow.com/questions/", "/", 'https://api.stackexchange.com/2.2/questions/', '/answers?&site=stackoverflow&filter=withbody&sort=votes');
+    let data = await response.json();
+    let snippet = "No answers";
+    if (data.items.length) {
+        snippet = data.items[0].body;
+    }
+    result.innerHTML = result.innerHTML + '<div  class="snippet" >' + snippet + '</div>';
+    highlight(result);
 }
 
 async function addNpmData(result) {
