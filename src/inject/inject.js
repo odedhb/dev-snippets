@@ -33,8 +33,8 @@ async function addStackOverflowData(result) {
     if (data.items.length) {
         answer = data.items[0].body;
     }
-    result.innerHTML += prepareSnippet(answer);
-    highlight(result);
+    result.innerHTML += wrapSnippet(answer);
+    prepare(result);
 }
 
 async function addNpmData(result) {
@@ -49,24 +49,12 @@ async function addGitHubData(result) {
     if (!response) throw ('next');
     let data = await response.text();
     let parsedMarkDown = marked(data);
-    result.innerHTML += prepareSnippet(parsedMarkDown);
-    highlight(result);
+    result.innerHTML += wrapSnippet(parsedMarkDown);
+    prepare(result);
 }
 
-function prepareSnippet(htmlString) {
-
-    let snippet = '<div class="snippet">';
-    snippet += htmlString;
-    snippet += '</div>';
-
-    // matches.forEach(match => {
-    //     if (snippet.split(/\r\n|\r|\n/).length < 20) {
-    //         match = match.replace(/```/g, '');
-    //         snippet += '<pre>' + match + '</pre>';
-    //     }
-    // });
-
-    return snippet;
+function wrapSnippet(htmlString) {
+    return '<div class="snippet">' + htmlString + '</div>';
 }
 
 async function getContent(searchResult, sourceUriStart, sourceUriEnd, targetUriStart, targetUriEnd) {
@@ -93,11 +81,16 @@ function getPathPart(result, start, end) {
     return id;
 }
 
-function highlight(block) {
+function prepare(block) {
     let children = block.querySelectorAll("*");
+    let childCount = 0;
     children.forEach(element => {
+        childCount++;
         if (element.localName === 'pre' || element.localName === 'code') {
             hljs.highlightBlock(element);
+        }
+        if (childCount > 100) {
+            element.style.display = "none";
         }
     });
 }
