@@ -25,7 +25,8 @@
         ],
         "js": [
             "src/inject/inject.js",
-            "js/highlight.js"
+            "js/highlight.js",
+            "js/marked.min.js"
         ],
         "matches": [
             "https://www.google.co.il/*",

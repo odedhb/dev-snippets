@@ -49,13 +49,7 @@ async function addGitHubData(result) {
     if (!response) throw ('next');
     let data = await response.text();
     let snippet = '<div class="snippet">';
-    let matches = data.match(/```[\s\S]+?```/g);
-    matches.forEach(match => {
-        if (snippet.split(/\r\n|\r|\n/).length < 20) {
-            match = match.replace(/```/g, '');
-            snippet += '<pre>' + match + '</pre>';
-        }
-    });
+    snippet += marked(data);
     snippet += '</div>';
     result.innerHTML += snippet;
     highlight(result);
