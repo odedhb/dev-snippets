@@ -29,11 +29,11 @@ async function addStackOverflowData(result) {
     let response = await getContent(result, "stackoverflow.com/questions/", "/", 'https://api.stackexchange.com/2.2/questions/', '/answers?&site=stackoverflow&filter=withbody&sort=votes');
     if (!response) throw ('next');
     let data = await response.json();
-    let snippet = "No answers";
+    let answer = "No answers";
     if (data.items.length) {
-        snippet = data.items[0].body;
+        answer = data.items[0].body;
     }
-    result.innerHTML = result.innerHTML + '<div  class="snippet" >' + snippet + '</div>';
+    result.innerHTML += prepareSnippet(answer);
     highlight(result);
 }
 
@@ -48,11 +48,25 @@ async function addGitHubData(result) {
     let response = await getContent(result, "github.com/", "", 'https://raw.githubusercontent.com/', '/master/README.md');
     if (!response) throw ('next');
     let data = await response.text();
-    let snippet = '<div class="snippet">';
-    snippet += marked(data);
-    snippet += '</div>';
-    result.innerHTML += snippet;
+    let parsedMarkDown = marked(data);
+    result.innerHTML += prepareSnippet(parsedMarkDown);
     highlight(result);
+}
+
+function prepareSnippet(htmlString) {
+
+    let snippet = '<div class="snippet">';
+    snippet += htmlString;
+    snippet += '</div>';
+
+    // matches.forEach(match => {
+    //     if (snippet.split(/\r\n|\r|\n/).length < 20) {
+    //         match = match.replace(/```/g, '');
+    //         snippet += '<pre>' + match + '</pre>';
+    //     }
+    // });
+
+    return snippet;
 }
 
 async function getContent(searchResult, sourceUriStart, sourceUriEnd, targetUriStart, targetUriEnd) {
@@ -87,4 +101,3 @@ function highlight(block) {
         }
     });
 }
-
