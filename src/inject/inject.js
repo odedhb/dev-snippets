@@ -81,15 +81,15 @@ function getPathPart(result, start, end) {
     return id;
 }
 
-function prepare(block) {
-    let children = block.querySelectorAll("*");
-    let childCount = 0;
-    children.forEach(element => {
-        childCount++;
+function prepare(result) {
+    let blocks = result.querySelectorAll("*");
+    let blocksSize = '';
+    blocks.forEach(element => {
+        blocksSize += element.innerHTML;
         if (element.localName === 'pre' || element.localName === 'code') {
             hljs.highlightBlock(element);
         }
-        if (childCount > 100) {
+        if (blocksSize.split(/\r\n|\r|\n/).length > 100) {
             element.style.display = "none";
         }
     });
