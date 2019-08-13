@@ -77,18 +77,14 @@ function getPathPart(result, start, end) {
 }
 
 function prepare(result, snippet) {
+
     let wrappedSnippet = '<div class="snippet">' + snippet + '</div>';
     result.innerHTML += wrappedSnippet;
 
     let blocks = result.querySelectorAll("*");
-    let blocksSize = '';
     for (let element of blocks) {
-        blocksSize += element.innerHTML + '\n';
         if (element.localName === 'pre' || element.localName === 'code') {
             hljs.highlightBlock(element);
-        }
-        if (blocksSize.split(/\r\n|\r|\n/).length > 200) {
-            element.style.display = "none";
         }
     }
 }
