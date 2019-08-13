@@ -34,8 +34,7 @@ async function addStackOverflowData(result) {
     if (data.items.length) {
         answer = data.items[0].body;
     }
-    result.innerHTML += wrapSnippet(answer);
-    prepare(result);
+    prepare(result, answer);
 }
 
 async function addNpmData(result) {
@@ -50,12 +49,7 @@ async function addGitHubData(result) {
     if (!response) throw ('next');
     let data = await response.text();
     let parsedMarkDown = marked(data);
-    result.innerHTML += wrapSnippet(parsedMarkDown);
-    prepare(result);
-}
-
-function wrapSnippet(htmlString) {
-    return '<div class="snippet">' + htmlString + '</div>';
+    prepare(result, parsedMarkDown);
 }
 
 async function getContent(searchResult, sourceUriStart, sourceUriEnd, targetUriStart, targetUriEnd) {
@@ -82,7 +76,10 @@ function getPathPart(result, start, end) {
     return id;
 }
 
-function prepare(result) {
+function prepare(result, snippet) {
+    let wrappedSnippet = '<div class="snippet">' + snippet + '</div>';
+    result.innerHTML += wrappedSnippet;
+
     let blocks = result.querySelectorAll("*");
     let blocksSize = '';
     for (let element of blocks) {
