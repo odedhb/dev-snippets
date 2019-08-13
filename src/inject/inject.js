@@ -17,6 +17,7 @@ function getSearchResults() {
     let htmlResults = document.getElementsByClassName("r");
     // console.log(htmlResults); //for debugging
     for (let result of htmlResults) {
+        if (result.nodeName !== 'DIV') continue;
         addGitHubData(result).catch(() => {
             addNpmData(result).catch(() => {
                 addStackOverflowData(result).catch(err => console.log(err));
@@ -85,11 +86,11 @@ function prepare(result) {
     let blocks = result.querySelectorAll("*");
     let blocksSize = '';
     blocks.forEach(element => {
-        blocksSize += element.innerHTML;
+        blocksSize += element.innerHTML + '\n';
         if (element.localName === 'pre' || element.localName === 'code') {
             hljs.highlightBlock(element);
         }
-        if (blocksSize.split(/\r\n|\r|\n/).length > 100) {
+        if (blocksSize.split(/\r\n|\r|\n/).length > 200) {
             element.style.display = "none";
         }
     });
