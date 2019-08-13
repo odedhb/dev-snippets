@@ -85,7 +85,7 @@ function getPathPart(result, start, end) {
 function prepare(result) {
     let blocks = result.querySelectorAll("*");
     let blocksSize = '';
-    blocks.forEach(element => {
+    for (let element of blocks) {
         blocksSize += element.innerHTML + '\n';
         if (element.localName === 'pre' || element.localName === 'code') {
             hljs.highlightBlock(element);
@@ -93,5 +93,5 @@ function prepare(result) {
         if (blocksSize.split(/\r\n|\r|\n/).length > 200) {
             element.style.display = "none";
         }
-    });
+    }
 }
