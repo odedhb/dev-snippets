@@ -34,6 +34,7 @@ async function addStackOverflowData(result) {
     if (data.items.length) {
         answer = data.items[0].body;
     }
+    result.innerHTML = result.innerHTML + `<div><img src="http://img.shields.io/badge/score-${data.items[0].score}-blue.svg?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAgMTIwIj48cGF0aCBkPSJNODQuNCA5My44VjcwLjZoNy43djMwLjlIMjIuNlY3MC42aDcuN3YyMy4yeiIgZmlsbD0iI2JjYmJiYiIvPjxwYXRoIGQ9Ik0zOC44IDY4LjRsMzcuOCA3LjkgMS42LTcuNi0zNy44LTcuOS0xLjYgNy42em01LTE4bDM1IDE2LjMgMy4yLTctMzUtMTYuNC0zLjIgNy4xem05LjctMTcuMmwyOS43IDI0LjcgNC45LTUuOS0yOS43LTI0LjctNC45IDUuOXptMTkuMi0xOC4zbC02LjIgNC42IDIzIDMxIDYuMi00LjYtMjMtMzF6TTM4IDg2aDM4LjZ2LTcuN0gzOFY4NnoiIGZpbGw9IiNmNDgwMjMiLz48L3N2Zz4="></img></div>`;
     prepare(result, answer);
 }
 
