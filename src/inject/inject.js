@@ -43,7 +43,7 @@ async function addNpmData(result) {
     let readmeResponse = await runtimeMessage("npmData", packageName);
     let readmeData = readmeResponse.collected.metadata.readme;
     if (!readmeData) return;
-    result.innerHTML = result.innerHTML + `<img src="https://img.shields.io/npm/dw/${packageName}.svg?style=for-the-badge&logo=npm"  onerror="this.style.display='none'"></img>`;
+    result.innerHTML = result.innerHTML + `<div><img src="https://img.shields.io/npm/dw/${packageName}.svg?style=for-the-badge&logo=npm"></img></div>`;
     let parsedMarkDown = marked(readmeData);
     prepare(result, parsedMarkDown);
 }
@@ -52,6 +52,10 @@ async function addGitHubData(result) {
     let response = await getContent(result, "github.com/(.*)", 'https://raw.githubusercontent.com/', '/master/README.md');
     if (!response) throw ('next');
     let data = await response.text();
+
+    let repoPath = 'request/request';
+    result.innerHTML = result.innerHTML + `<div><img src="https://img.shields.io/github/last-commit/${repoPath}.svg?style=for-the-badge&logo=github"></img></div>`;
+
     let parsedMarkDown = marked(data);
     prepare(result, parsedMarkDown);
 }
