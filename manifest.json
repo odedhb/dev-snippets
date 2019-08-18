@@ -16,8 +16,7 @@
         "default_popup": "src/page_action/page_action.html"
     },
     "permissions": [
-        "https://www.google.com/*",
-        "*://*.npms.io/*"
+        "https://www.google.com/*"
     ],
     "content_scripts": [{
         "css": [
