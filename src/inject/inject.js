@@ -19,8 +19,8 @@ function getSearchResults() {
     for (let result of htmlResults) {
         if (result.nodeName !== 'DIV') continue;
         addGitHubData(result).catch(() => {
-            addNpmData(result).catch(() => {
-                addStackOverflowData(result).catch(err => console.log(err));
+            addStackOverflowData(result).catch(() => {
+                addNpmData(result).catch(err => console.log(err));
             })
         })
     }
@@ -38,15 +38,13 @@ async function addStackOverflowData(result) {
 }
 
 async function addNpmData(result) {
-    let response = await getContent(result, "npmjs.com/package/(.*)", 'https://api.npmjs.org/downloads/point/last-week/', '');
-    if (!response) throw ('next');
-    let data = await response.json();
-    result.innerHTML = result.innerHTML + '<div class="snippet" style="font-size: large;">' + data.downloads.toLocaleString() + ' weekly downloads</div>';
-
     let packageName = getPathPart(result, "npmjs.com/package/(.*)");
     if (!packageName) return;
     let readmeResponse = await runtimeMessage("npmData", packageName);
-    let parsedMarkDown = marked(readmeResponse.collected.metadata.readme);
+    let readmeData = readmeResponse.collected.metadata.readme;
+    if (!readmeData) return;
+    result.innerHTML = result.innerHTML + `<img src="https://img.shields.io/npm/dw/${packageName}.svg?style=for-the-badge&logo=npm"  onerror="this.style.display='none'"></img>`;
+    let parsedMarkDown = marked(readmeData);
     prepare(result, parsedMarkDown);
 }
 
