@@ -27,7 +27,7 @@ function getSearchResults() {
 }
 
 async function addStackOverflowData(result) {
-    let response = await getContent(result, "stackoverflow.com/questions/", "/", 'https://api.stackexchange.com/2.2/questions/', '/answers?&site=stackoverflow&filter=withbody&sort=votes');
+    let response = await getContent(result, "stackoverflow.com/questions/(.*?)/", 'https://api.stackexchange.com/2.2/questions/', '/answers?&site=stackoverflow&filter=withbody&sort=votes');
     if (!response) throw ('next');
     let data = await response.json();
     let answer = "No answers";
@@ -38,37 +38,37 @@ async function addStackOverflowData(result) {
 }
 
 async function addNpmData(result) {
-    let response = await getContent(result, "npmjs.com/package/", '', 'https://api.npmjs.org/downloads/point/last-week/', '');
+    let response = await getContent(result, "npmjs.com/package/(.*)", 'https://api.npmjs.org/downloads/point/last-week/', '');
     if (!response) throw ('next');
     let data = await response.json();
     result.innerHTML = result.innerHTML + '<div class="snippet" style="font-size: large;">' + data.downloads.toLocaleString() + ' weekly downloads</div>';
 }
 
 async function addGitHubData(result) {
-    let response = await getContent(result, "github.com/", "", 'https://raw.githubusercontent.com/', '/master/README.md');
+    let response = await getContent(result, "github.com/(.*)", 'https://raw.githubusercontent.com/', '/master/README.md');
     if (!response) throw ('next');
     let data = await response.text();
     let parsedMarkDown = marked(data);
     prepare(result, parsedMarkDown);
 }
 
-async function getContent(searchResult, sourceUriStart, sourceUriEnd, targetUriStart, targetUriEnd) {
-    let part = getPathPart(searchResult, sourceUriStart, sourceUriEnd);
+async function getContent(searchResult, regex, targetUriStart, targetUriEnd) {
+    let part = getPathPart(searchResult, regex);
     if (!part) return null;
     let response = await fetch(targetUriStart + part + targetUriEnd);
 
     if (!response || response.status !== 200) {
-        throw ('Looks like there was a ' + sourceUriStart + ' problem. Status Code: ' + response.status);
+        throw ('Looks like there was a ' + regex + ' problem. Status Code: ' + response.status);
     }
 
     return response;
 }
 
-function getPathPart(result, start, end) {
+function getPathPart(result, regex) {
     let id;
     try {
         let href = result.childNodes[0].href;
-        let matches = href.match(start + "(.*)" + end);
+        let matches = href.match(regex);
         id = matches[1];
     } catch (e) {
         return null;
