@@ -42,6 +42,12 @@ async function addNpmData(result) {
     if (!response) throw ('next');
     let data = await response.json();
     result.innerHTML = result.innerHTML + '<div class="snippet" style="font-size: large;">' + data.downloads.toLocaleString() + ' weekly downloads</div>';
+
+    let packageName = getPathPart(result, "npmjs.com/package/(.*)");
+    if (!packageName) return;
+    let readmeResponse = await runtimeMessage("npmData", packageName);
+    let parsedMarkDown = marked(readmeResponse.collected.metadata.readme);
+    prepare(result, parsedMarkDown);
 }
 
 async function addGitHubData(result) {
@@ -87,4 +93,16 @@ function prepare(result, snippet) {
             hljs.highlightBlock(element);
         }
     }
+}
+
+
+async function runtimeMessage(contentScriptQuery, itemId) {
+    return new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage(
+            { contentScriptQuery: contentScriptQuery, itemId: itemId },
+            (json) => {
+                if (!json) return reject();
+                resolve(json);
+            });
+    });
 }

@@ -16,7 +16,8 @@
         "default_popup": "src/page_action/page_action.html"
     },
     "permissions": [
-        "https://www.google.com/*"
+        "https://www.google.com/*",
+        "*://*.npms.io/*"
     ],
     "content_scripts": [{
         "css": [
@@ -32,5 +33,9 @@
             "https://www.google.co.il/*",
             "https://www.google.com/*"
         ]
-    }]
+    }],
+    "background": {
+        "scripts": ["src/background/background.js"],
+        "persistent": false
+      }
 }
