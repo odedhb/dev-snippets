@@ -7,7 +7,7 @@ This is the code for the **Dev snippets on google search results** extension:
 
 
 # Install here
-https://chrome.google.com/webstore/detail/dev-snippets-on-google-se/abphlmegjmjfdiipedjoofdfpdlnbbcn
+**[Dev snippets on google search results (Chrome Web Store)](https://chrome.google.com/webstore/detail/dev-snippets-on-google-se/abphlmegjmjfdiipedjoofdfpdlnbbcn)**
 
 
 # Got feature suggestions?
