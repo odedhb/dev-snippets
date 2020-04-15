@@ -1,7 +1,8 @@
 {
     "name": "Dev snippets on google search results",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "manifest_version": 2,
+    "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
     "description": "This extension was created by Oded Breiner",
     "homepage_url": "https://www.linkedin.com/in/odedhb",
     "icons": {
@@ -15,23 +16,27 @@
         "default_title": "Dev snippets on google search results",
         "default_popup": "src/page_action/page_action.html"
     },
-    "content_scripts": [{
-        "css": [
-            "css/style.css",
-            "css/highlight.stackoverflow.css"
-        ],
-        "js": [
-            "src/inject/inject.js",
-            "js/highlight.js",
-            "js/marked.min.js"
-        ],
-        "matches": [
-            "https://www.google.co.il/*",
-            "https://www.google.com/*"
-        ]
-    }],
+    "content_scripts": [
+        {
+            "css": [
+                "css/style.css",
+                "css/highlight.stackoverflow.css"
+            ],
+            "js": [
+                "src/inject/inject.js",
+                "js/highlight.js",
+                "js/marked.min.js"
+            ],
+            "matches": [
+                "https://www.google.co.il/*",
+                "https://www.google.com/*"
+            ]
+        }
+    ],
     "background": {
-        "scripts": ["src/background/background.js"],
+        "scripts": [
+            "src/background/background.js"
+        ],
         "persistent": false
-      }
+    }
 }
