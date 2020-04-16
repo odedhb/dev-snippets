@@ -1,6 +1,6 @@
 {
     "name": "Dev snippets on google search results",
-    "version": "0.0.4",
+    "version": "0.0.6",
     "manifest_version": 2,
     "content_security_policy": "script-src 'self' https://ssl.google-analytics.com; object-src 'self'",
     "description": "This extension was created by Oded Breiner",
