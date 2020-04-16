@@ -8,6 +8,12 @@ chrome.runtime.onMessage.addListener(
                 .catch(error => console.error(error));
             return true;  // Will respond asynchronously.
         }
+        else if (request.contentScriptQuery == "trackEvent"){
+            _gaq.push(['_trackEvent',
+            'General', // category of activity
+            request.itemId, // Action
+         ]);
+        }
     });
 
 var _gaq = _gaq || [];

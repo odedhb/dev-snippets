@@ -14,6 +14,7 @@ function intervalCheck() {
 }
 
 function getSearchResults() {
+    runtimeMessage("trackEvent", "GoogleSearch");
     let htmlResults = document.getElementsByClassName("r");
     // console.log(htmlResults); //for debugging
     for (let result of htmlResults) {
