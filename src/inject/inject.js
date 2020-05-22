@@ -21,7 +21,11 @@ function getSearchResults() {
         if (result.nodeName !== 'DIV') continue;
         addGitHubData(result).catch(() => {
             addStackOverflowData(result).catch(() => {
-                addNpmData(result).catch(err => console.log(err));
+                addNpmData(result).catch(() => {
+                    addAmazonData(result).catch(err => {
+                        console.log(err);
+                    })
+                })
             })
         })
     }
@@ -42,10 +46,10 @@ async function addStackOverflowData(result) {
 
 async function addNpmData(result) {
     let packageName = getPathPart(result, "npmjs.com/package/(.*)");
-    if (!packageName) return;
+    if (!packageName) throw ('next');
     let readmeResponse = await runtimeMessage("npmData", packageName);
     let readmeData = readmeResponse.collected.metadata.readme;
-    if (!readmeData) return;
+    if (!readmeData) throw ('next');
     result.innerHTML = result.innerHTML + `<div><img src="https://img.shields.io/npm/dw/${packageName}.svg?style=for-the-badge&logo=npm"></img></div>`;
     let parsedMarkDown = marked(readmeData);
     prepare(result, parsedMarkDown);
@@ -59,6 +63,14 @@ async function addGitHubData(result) {
     let repoPath = 'request/request';
     result.innerHTML = result.innerHTML + `<div><img src="https://img.shields.io/github/last-commit/${repoPath}.svg?style=for-the-badge&logo=github"></img></div>`;
 
+    let parsedMarkDown = marked(data);
+    prepare(result, parsedMarkDown);
+}
+
+async function addAmazonData(result) {
+    let productID = getPathPart(result, "/dp/(.*)");
+    if (!productID) throw ('next');
+    result.innerHTML = result.innerHTML + `<a href="https://www.amazon.com/dp/${productID}?tag=searchsnippet-20"><div><img src="https://ws-na.amazon-adsystem.com/widgets/q?_encoding=UTF8&MarketPlace=US&ASIN=${productID}&ServiceVersion=20070822&ID=AsinImage&WS=1&Format=_SL250_"></img></div></a>`;
     let parsedMarkDown = marked(data);
     prepare(result, parsedMarkDown);
 }
